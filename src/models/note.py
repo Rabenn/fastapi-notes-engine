@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey
+from sqlalchemy import Column, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
+
 from src.database.config import Base
+
 
 class NoteModel(Base):
     __tablename__ = "notes"

@@ -1,35 +1,37 @@
 import json
 import secrets
-from typing import List
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends, HTTPException, status
+
+from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
 from fastapi.security import HTTPBasic, HTTPBasicCredentials, OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
+# Modelos importados para que Base los reconozca en el ciclo de vida
 from src.core.config import settings
 from src.core.security import create_access_token
-from src.database.config import engine, Base
+from src.database.config import Base, engine
 from src.database.redis import redis_client
+from src.models.user import UserModel
+from src.repositories.note import create_user_note, delete_user_note, get_user_notes
 from src.repositories.user import get_user_by_email
-from src.repositories.note import get_user_notes, create_user_note, delete_user_note
-from src.services.auth import get_db, authenticate_user, get_current_user, get_current_admin
+from src.schemas.note import Note, NoteCreate
+from src.schemas.user import Token, User, UserCreate, UserUpdate
+from src.services.auth import (
+    authenticate_user,
+    get_current_admin,
+    get_current_user,
+    get_db,
+)
 from src.services.user import (
+    create_user_service,
+    delete_user_service,
     get_all_users_service,
     get_user_service,
-    create_user_service,
     update_user_service,
-    delete_user_service
 )
-from src.schemas.user import UserCreate, UserUpdate, User, Token
-from src.schemas.note import NoteCreate, Note
-from src.models.user import UserModel
-
-# Modelos importados para que Base los reconozca en el ciclo de vida
-import src.models.user
-import src.models.note
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, title="Secure Notes & Users API")
 
@@ -99,7 +101,7 @@ async def login(
     }
 
 # Endpoints Usuarios (Acceso Administrador)
-@app.get("/users/", response_model=List[User])
+@app.get("/users/", response_model=list[User])
 async def read_users(db: AsyncSession = Depends(get_db), _: UserModel = Depends(get_current_admin)):
     return await get_all_users_service(db)
 
@@ -120,7 +122,7 @@ async def delete_user_endpoint(user_id: int, db: AsyncSession = Depends(get_db),
     await delete_user_service(db, user_id)
 
 # Bloc de Notas con Redis Cache-Aside
-@app.get("/notes/", response_model=List[Note])
+@app.get("/notes/", response_model=list[Note])
 async def get_my_notes(
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_user)

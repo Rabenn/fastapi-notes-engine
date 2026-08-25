@@ -4,14 +4,14 @@ services:
     container_name: mysql_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: fastapi_db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-fastapi_db}
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -prootpassword"]
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$${MYSQL_ROOT_PASSWORD:-rootpassword}"]
       interval: 3s
       timeout: 3s
       retries: 15
@@ -32,10 +32,20 @@ services:
       - "8000:8000"
     volumes:
       - ./src:/app/src
+      - ./tests:/app/tests
+      - ./alembic:/app/alembic
+      - ./alembic.ini:/app/alembic.ini
+      - ./pyproject.toml:/app/pyproject.toml
     command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    env_file:
+      - .env
     environment:
-      - DATABASE_URL=mysql+aiomysql://root:rootpassword@db:3306/fastapi_db
-      - REDIS_URL=redis://redis:6379/0
+      - DATABASE_URL=${DATABASE_URL:-mysql+aiomysql://root:rootpassword@db:3306/fastapi_db}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - SECRET_KEY=${SECRET_KEY:-supersecretkey_change_in_production_min_32_characters_long_1234}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      - DOCS_USER=${DOCS_USER:-admin}
+      - DOCS_PASS=${DOCS_PASS:-admin}
     depends_on:
       db:
         condition: service_healthy

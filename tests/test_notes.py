@@ -1,6 +1,8 @@
 import pytest
-from src.services.user import create_user_service
+
 from src.schemas.user import UserCreate
+from src.services.user import create_user_service
+
 
 @pytest.mark.asyncio
 async def test_notes_crud(client, test_db_session):

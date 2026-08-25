@@ -1,7 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+
 from src.models.note import NoteModel
 from src.schemas.note import NoteCreate
+
 
 async def get_user_notes(db: AsyncSession, user_id: int):
     query = select(NoteModel).where(NoteModel.user_id == user_id).order_by(NoteModel.id.desc())

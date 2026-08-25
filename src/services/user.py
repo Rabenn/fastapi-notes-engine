@@ -1,7 +1,16 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.repositories.user import get_all_users, get_user_by_id, get_user_by_email, create_user, update_user, delete_user
+
+from src.repositories.user import (
+    create_user,
+    delete_user,
+    get_all_users,
+    get_user_by_email,
+    get_user_by_id,
+    update_user,
+)
 from src.schemas.user import UserCreate, UserUpdate
+
 
 async def get_all_users_service(db: AsyncSession):
     return await get_all_users(db)

@@ -1,0 +1,22 @@
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",    # Errores pycodestyle
+    "W",    # Advertencias pycodestyle
+    "F",    # Pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+]
+ignore = [
+    "B008",   # Depends(...) en FastAPI
+    "EXE002", # Archivo sin shebang (Windows/Docker)
+    "E501",   # Ignora límite estricto de longitud de línea
+]
+
+[tool.ruff.lint.per-file-ignores]
+"alembic/env.py" = ["F401"]
+"src/main.py" = ["F401"]

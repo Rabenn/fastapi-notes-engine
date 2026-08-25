@@ -1,9 +1,11 @@
+from sqlalchemy import or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy import or_
+
+from src.core.security import get_password_hash
 from src.models.user import UserModel
 from src.schemas.user import UserCreate, UserUpdate
-from src.core.security import get_password_hash
+
 
 async def get_all_users(db: AsyncSession):
     result = await db.execute(select(UserModel))
