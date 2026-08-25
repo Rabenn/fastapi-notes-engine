@@ -31,11 +31,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./src:/app/src
-      - ./tests:/app/tests
-      - ./alembic:/app/alembic
-      - ./alembic.ini:/app/alembic.ini
-      - ./pyproject.toml:/app/pyproject.toml
+      - .:/app
     command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
     env_file:
       - .env

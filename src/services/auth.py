@@ -9,9 +9,11 @@ from src.repositories.user import get_user_by_id, get_user_by_identifier
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
+
 async def get_db():
     async with AsyncSessionLocal() as session:
         yield session
+
 
 async def authenticate_user(db: AsyncSession, identifier: str, password: str) -> UserModel:
     user = await get_user_by_identifier(db, identifier)
@@ -23,7 +25,10 @@ async def authenticate_user(db: AsyncSession, identifier: str, password: str) ->
         )
     return user
 
-async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)) -> UserModel:
+
+async def get_current_user(
+    token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)
+) -> UserModel:
     payload = decode_access_token(token)
     if payload is None or "sub" not in payload:
         raise HTTPException(
@@ -36,6 +41,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
     return user
+
 
 async def get_current_admin(current_user: UserModel = Depends(get_current_user)) -> UserModel:
     if not current_user.is_admin:

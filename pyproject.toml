@@ -4,17 +4,17 @@ line-length = 100
 
 [tool.ruff.lint]
 select = [
-    "E",    # Errores pycodestyle
-    "W",    # Advertencias pycodestyle
-    "F",    # Pyflakes
-    "I",    # isort
-    "UP",   # pyupgrade
-    "B",    # flake8-bugbear
+    "E",
+    "W",
+    "F",
+    "I",
+    "UP",
+    "B",
 ]
 ignore = [
-    "B008",   # Depends(...) en FastAPI
-    "EXE002", # Archivo sin shebang (Windows/Docker)
-    "E501",   # Longitud de línea
+    "B008",
+    "EXE002",
+    "E501",
 ]
 
 [tool.ruff.lint.per-file-ignores]
