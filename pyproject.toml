@@ -14,9 +14,13 @@ select = [
 ignore = [
     "B008",   # Depends(...) en FastAPI
     "EXE002", # Archivo sin shebang (Windows/Docker)
-    "E501",   # Ignora límite estricto de longitud de línea
+    "E501",   # Longitud de línea
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "alembic/env.py" = ["F401"]
 "src/main.py" = ["F401"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+asyncio_mode = "auto"
